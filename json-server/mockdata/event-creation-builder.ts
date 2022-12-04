@@ -1,6 +1,6 @@
-import {ViewDto} from "../api-model";
+import {EventCreationBuilderDto} from "../api-model";
 
-const views: ViewDto[] = [
+const eventCreationBuilder: EventCreationBuilderDto[] = [
     {
         name: "title",
         label: "Title",
@@ -35,6 +35,6 @@ const views: ViewDto[] = [
         label: "Description",
         component: "textarea"
     }
-]
+];
 
-export default views;
+export default eventCreationBuilder;

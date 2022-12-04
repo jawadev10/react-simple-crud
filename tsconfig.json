@@ -22,7 +22,7 @@
   },
   "include": [
     "src",
-    "src/json-server"
+    "json-server"
   ],
   "exclude": ["node_modules"]
 }
