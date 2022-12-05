@@ -8,7 +8,7 @@ export interface CustomInputProps {
 
 export const CustomInput = ({name, label, required}: CustomInputProps) => {
     return (
-        <Form.Item name={name} label={label}>
+        <Form.Item name={name} label={label} required={required}>
             <Input placeholder={label} id={name} required={required}/>
         </Form.Item>
     )

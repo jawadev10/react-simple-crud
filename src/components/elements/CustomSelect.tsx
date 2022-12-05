@@ -7,11 +7,10 @@ export interface CustomSelectProps {
     options?: EventCreationOptions[]
 }
 
-
 export const CustomSelect = ({name, label, options}: CustomSelectProps) => {
     return (
         <Form.Item name={name} label={label}>
-            <Select />
+            <Select options={options} />
         </Form.Item>
     )
 }
