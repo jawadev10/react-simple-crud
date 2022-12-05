@@ -61,15 +61,17 @@ const EventOverview: React.FC = (props): React.ReactElement => {
     return (
         <>
 
-            <h3 className='d-flex justify-content-center'>Welcome to this overview component!</h3>
+            <h3 className='d-flex justify-content-center mt-4'>Welcome to this overview component!</h3>
 
 
             {!eventsLoading && !eventsCreationBuilderLoading &&
             <Table
-                className='mt-4'
+                className='mt-3 w-50 d-flex'
                 dataSource={dataSource}
                 columns={columns} />
             }
+
+
         </>
 
     );
