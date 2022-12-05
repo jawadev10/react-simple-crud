@@ -13,14 +13,14 @@ const EventOverview: React.FC = (props): React.ReactElement => {
 
 
     useEffect(() => {
-        generateTableColumns();
-        generateTableData();
+        if(eventsCreationbuilder && events) {
+            generateTableColumns();
+            generateTableData();
+        }
     }, [events, eventsCreationbuilder]);
 
     const generateTableColumns = () => {
-        if (eventsCreationbuilder) {
-            eventsCreationbuilder.forEach((eventBuilder) => {
-
+            eventsCreationbuilder!.forEach((eventBuilder) => {
                 if (eventBuilder.component === 'range_picker') {
                     [...eventBuilder.name].forEach((name: string) => {
                         const columnHeader: EventColumnHeader = {
@@ -39,8 +39,6 @@ const EventOverview: React.FC = (props): React.ReactElement => {
                     setColumns((oldColumns) => [...oldColumns, columnHeader])
                 }
             });
-            console.log(columns)
-        }
     }
 
     const generateTableData = () => {
@@ -52,8 +50,6 @@ const EventOverview: React.FC = (props): React.ReactElement => {
                 };
                 setDataSource((oldDataSource) => [...oldDataSource, mapEvent]);
             })
-
-            console.log(dataSource)
         }
     }
 
@@ -66,9 +62,10 @@ const EventOverview: React.FC = (props): React.ReactElement => {
 
             {!eventsLoading && !eventsCreationBuilderLoading &&
             <Table
-                className='mt-3 w-50 d-flex'
+                className='mt-3 d-flex justify-content-center'
                 dataSource={dataSource}
-                columns={columns} />
+                columns={columns}
+            />
             }
 
 
