@@ -12,9 +12,9 @@ export const Element = ({name, label, component, required, options }: EventCreat
         case 'textarea':
             return (<CustomTextArea name={name as string} label={label} />);
         case 'range_picker':
-            return (<CustomRangePicker name={name as string[]} label={label} />);
+            return (<CustomRangePicker name={name as string[]} label={label} required={required} />);
         case 'select':
-            return (<CustomSelect name={name as string} label={label} options={options} />);
+            return (<CustomSelect name={name as string} label={label} options={options} required={required} />);
         default:
             return null
     }

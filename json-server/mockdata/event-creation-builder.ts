@@ -10,6 +10,7 @@ const eventCreationBuilder: EventCreationBuilderDto[] = [
     {
         name: "type",
         component: "select",
+        required: true,
         label: "Type",
         options: [
             {
@@ -28,7 +29,8 @@ const eventCreationBuilder: EventCreationBuilderDto[] = [
             "endDate"
         ],
         component: "range_picker",
-        label: "Date"
+        label: "Date",
+        required: true
     },
     {
         name: "description",
