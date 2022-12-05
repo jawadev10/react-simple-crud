@@ -4,7 +4,7 @@ import mockData from "./mockdata";
 const server = jsonServer.create();
 const middlewares = jsonServer.defaults();
 const router = jsonServer.router(mockData);
-const port = 3005;
+const port = 3001;
 
 server.use(middlewares);
 server.use(jsonServer.rewriter({
