@@ -17,7 +17,6 @@ const EventOverview: React.FC = (): React.ReactElement => {
 
             <h4 className='d-flex justify-content-center mt-4'>Welcome to this overview component!</h4>
 
-
             <div className='mt-5 d-flex justify-content-center text-center'>
                 {
                     (eventsLoading || eventsCreationBuilderLoading) &&
