@@ -1,4 +1,4 @@
-import React, {Fragment, useState} from "react";
+import React, {Fragment, useCallback, useState} from "react";
 import {useEvents} from "../../hooks/useEvents";
 import {useEventCreationBuilder} from "../../hooks/useEventCreationBuilder";
 import {Button, Form, Modal, Spin, Table} from "antd";
@@ -7,10 +7,11 @@ import {useEventsColumns} from "../../hooks/useEventsColumns";
 import {Element} from "../../components/Element";
 import {useForm} from "antd/es/form/Form";
 
+
 const EventOverview: React.FC = (): React.ReactElement => {
     const [visible, setVisible] = useState<boolean>(false);
     const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
-
+    const [isDisabled, setDisabled] = useState<boolean>(true);
 
     const {eventsLoading} = useEvents();
     const {eventsCreationBuilderLoading, eventsCreationbuilder} = useEventCreationBuilder();
@@ -18,12 +19,20 @@ const EventOverview: React.FC = (): React.ReactElement => {
     const {columns} = useEventsColumns();
     const [form] = useForm();
 
-
-    const handleSubmit = (values: any) => {
-        setConfirmLoading(true);
-        console.log('Success' + JSON.stringify(values));
-    }
-
+    const handleSubmit = useCallback(async (values: any) => {
+        form
+            .validateFields()
+            .then(() => {
+                // Validation is successful
+               // setConfirmLoading(true);
+                console.log(JSON.stringify({values}));
+               // form.resetFields();
+            })
+            .catch((errors) => {
+                // Errors in the fields
+                console.log(errors)
+            });
+    }, [form]);
 
     const showModal = () => {
         setVisible(true);
@@ -32,6 +41,15 @@ const EventOverview: React.FC = (): React.ReactElement => {
     const handleCancel = () => {
         setVisible(false);
         form.resetFields();
+        setDisabled(true);
+    };
+
+    const handleValidation = () => {
+        form
+            .validateFields()
+            .catch((errors) => {
+                errors.errorFields.length > 0 ? setDisabled(true) : setDisabled(false);
+            });
     };
 
     return (
@@ -60,7 +78,9 @@ const EventOverview: React.FC = (): React.ReactElement => {
                         key="submit"
                         type="primary"
                         loading={confirmLoading}
-                        onClick={form.submit}>
+                        onClick={form.submit}
+                        disabled={isDisabled}
+                    >
                         Save
                     </Button>
                 ]}
@@ -70,6 +90,7 @@ const EventOverview: React.FC = (): React.ReactElement => {
                     className="mt-4"
                     form={form}
                     onFinish={handleSubmit}
+                    onValuesChange={handleValidation}
                     autoComplete="off"
                 >
                     {eventsCreationbuilder!.map((eventCreationBuilder, index) =>

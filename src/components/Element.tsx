@@ -4,7 +4,6 @@ import {CustomRangePicker} from "./elements/CustomRangePicker";
 import {CustomSelect} from "./elements/CustomSelect";
 import {EventCreationBuilder} from "../models/EventCreationBuilder";
 
-
 export const Element = ({name, label, component, required, options }: EventCreationBuilder) => {
     switch (component) {
         case 'text':
@@ -18,4 +17,11 @@ export const Element = ({name, label, component, required, options }: EventCreat
         default:
             return null
     }
+}
+
+export const requiredRule = (required: boolean | undefined, label: string) => {
+    return [{
+        required: required,
+        message: `${label} cannot be empty!`,
+    }]
 }
