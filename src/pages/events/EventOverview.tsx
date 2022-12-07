@@ -7,41 +7,46 @@ import {useEventsColumns} from "../../hooks/useEventsColumns";
 import {Element} from "../../components/Element";
 import {useForm} from "antd/es/form/Form";
 import moment from "moment";
+import {usePostEvent} from "../../hooks/usePostEvent";
 
 
 const EventOverview: React.FC = (): React.ReactElement => {
-    const [visible, setVisible] = useState<boolean>(false);
-    const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
-    const [isDisabled, setDisabled] = useState<boolean>(true);
+    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+    const [isSaveBtnDisabled, setSaveBtnDisabled] = useState<boolean>(true);
 
     const {eventsLoading} = useEvents();
+    const {postEvent, loadingPostEvent, isEventCreated} = usePostEvent();
+
     const {eventsCreationBuilderLoading, eventsCreationbuilder} = useEventCreationBuilder();
     const {dataSource} = useEventsDataSource();
     const {columns} = useEventsColumns();
+
+
     const [form] = useForm();
 
     const handleSubmit = useCallback(async (values: any) => {
         form
             .validateFields()
             .then(() => {
-                // Validation is successful
-                // setConfirmLoading(true);
-                console.log(JSON.stringify({values}));
-
                 const formatDate = "YYYY-MM-DD";
                 const startDate = moment(values.startDate.endDate[0].toString()).format(formatDate);
                 const endDate = moment(values.startDate.endDate[1].toString()).format(formatDate);
 
                 delete values.startDate;
 
-                const payload = {
+                const eventPayload = {
                     startDate,
                     endDate,
                     ...values
                 }
 
-                // set disable cancel button axios post then close modal +
-                // form.resetFields();
+                postEvent(eventPayload);
+
+                if(isEventCreated) {
+                    form.resetFields();
+                    setIsModalVisible(false);
+                    setSaveBtnDisabled(true);
+                }
             })
             .catch((errors) => {
                 // Errors in the fields
@@ -50,20 +55,20 @@ const EventOverview: React.FC = (): React.ReactElement => {
     }, [form]);
 
     const showModal = () => {
-        setVisible(true);
+        setIsModalVisible(true);
     };
 
     const handleCancel = () => {
-        setVisible(false);
+        setIsModalVisible(false);
         form.resetFields();
-        setDisabled(true);
+        setSaveBtnDisabled(true);
     };
 
     const handleValidation = () => {
         form
             .validateFields()
             .catch((errors) => {
-                errors.errorFields.length > 0 ? setDisabled(true) : setDisabled(false);
+                errors.errorFields.length > 0 ? setSaveBtnDisabled(true) : setSaveBtnDisabled(false);
             });
     };
 
@@ -82,9 +87,9 @@ const EventOverview: React.FC = (): React.ReactElement => {
 
             <Modal
                 title="CREATE EVENT"
-                open={visible}
+                open={isModalVisible}
                 onCancel={handleCancel}
-                confirmLoading={confirmLoading}
+                confirmLoading={loadingPostEvent}
                 footer={[
                     <Button key="back" onClick={handleCancel}>
                         Cancel
@@ -92,9 +97,9 @@ const EventOverview: React.FC = (): React.ReactElement => {
                     <Button
                         key="submit"
                         type="primary"
-                        loading={confirmLoading}
+                        loading={loadingPostEvent}
                         onClick={form.submit}
-                        disabled={isDisabled}
+                        disabled={isSaveBtnDisabled}
                     >
                         Save
                     </Button>

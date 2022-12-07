@@ -4,4 +4,5 @@ export interface Event {
     type: string;
     startDate: Date;
     endDate?: Date;
+    description?: string;
 }
