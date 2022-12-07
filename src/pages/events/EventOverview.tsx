@@ -6,6 +6,7 @@ import {useEventsDataSource} from "../../hooks/useEventsDataSource";
 import {useEventsColumns} from "../../hooks/useEventsColumns";
 import {Element} from "../../components/Element";
 import {useForm} from "antd/es/form/Form";
+import moment from "moment";
 
 
 const EventOverview: React.FC = (): React.ReactElement => {
@@ -24,9 +25,23 @@ const EventOverview: React.FC = (): React.ReactElement => {
             .validateFields()
             .then(() => {
                 // Validation is successful
-               // setConfirmLoading(true);
+                // setConfirmLoading(true);
                 console.log(JSON.stringify({values}));
-               // form.resetFields();
+
+                const formatDate = "YYYY-MM-DD";
+                const startDate = moment(values.startDate.endDate[0].toString()).format(formatDate);
+                const endDate = moment(values.startDate.endDate[1].toString()).format(formatDate);
+
+                delete values.startDate;
+
+                const payload = {
+                    startDate,
+                    endDate,
+                    ...values
+                }
+
+                // set disable cancel button axios post then close modal +
+                // form.resetFields();
             })
             .catch((errors) => {
                 // Errors in the fields

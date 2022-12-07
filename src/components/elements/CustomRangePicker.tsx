@@ -13,7 +13,7 @@ const {RangePicker} = DatePicker;
 export const CustomRangePicker = ({name, label, required}: CustomRangePickerProps) => {
     return (
         <Form.Item name={name} label={label} required={required} rules={requiredRule(required, label)}>
-            <RangePicker />
+            <RangePicker format="YYYY-MM-DD" />
         </Form.Item>
     )
 }
