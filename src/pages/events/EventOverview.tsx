@@ -1,4 +1,4 @@
-import React, {Fragment, useCallback, useState} from "react";
+import React, {Fragment, useState} from "react";
 import {useEvents} from "../../hooks/useEvents";
 import {useEventCreationBuilder} from "../../hooks/useEventCreationBuilder";
 import {Button, Form, Modal, Spin, Table} from "antd";
@@ -7,15 +7,17 @@ import {useEventsColumns} from "../../hooks/useEventsColumns";
 import {Element} from "../../components/Element";
 import {useForm} from "antd/es/form/Form";
 import moment from "moment";
-import {usePostEvent} from "../../hooks/usePostEvent";
+import {eventsApi} from "../../services/events.service";
+import {toast, ToastContainer} from "react-toastify";
+import {Event} from "../../models/Event";
 
 
 const EventOverview: React.FC = (): React.ReactElement => {
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
     const [isSaveBtnDisabled, setSaveBtnDisabled] = useState<boolean>(true);
+    const [isLoadingPostEvent, setIsLoadingPostEvent] = useState<boolean>(false);
 
     const {eventsLoading} = useEvents();
-    const {postEvent, loadingPostEvent, isEventCreated} = usePostEvent();
 
     const {eventsCreationBuilderLoading, eventsCreationbuilder} = useEventCreationBuilder();
     const {dataSource} = useEventsDataSource();
@@ -24,7 +26,38 @@ const EventOverview: React.FC = (): React.ReactElement => {
 
     const [form] = useForm();
 
-    const handleSubmit = useCallback(async (values: any) => {
+    const postEvent = (eventPayload: Event): void => {
+        eventsApi.postEvent(eventPayload).then((event) => {
+            setIsLoadingPostEvent(false);
+            toast.success(`🚀 ${event.title} event has been created, wait 10 seconds it will appear in the table`, {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
+            form.resetFields();
+            setIsModalVisible(false);
+            setSaveBtnDisabled(true);
+        }).catch(((error) => {
+            toast.error(`😞 ${error}`, {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "colored",
+            });
+        }));
+    }
+
+    const handleSubmit = (values: any): void => {
+        setIsLoadingPostEvent(true);
         form
             .validateFields()
             .then(() => {
@@ -35,24 +68,19 @@ const EventOverview: React.FC = (): React.ReactElement => {
                 delete values.startDate;
 
                 const eventPayload = {
+                    id: Math.floor(Math.random() * 10000),
                     startDate,
                     endDate,
                     ...values
                 }
-
                 postEvent(eventPayload);
 
-                if(isEventCreated) {
-                    form.resetFields();
-                    setIsModalVisible(false);
-                    setSaveBtnDisabled(true);
-                }
             })
-            .catch((errors) => {
-                // Errors in the fields
-                console.log(errors)
+            .catch(() => {
+                //errors in the fields
+                setIsLoadingPostEvent(false);
             });
-    }, [form]);
+    };
 
     const showModal = () => {
         setIsModalVisible(true);
@@ -64,7 +92,7 @@ const EventOverview: React.FC = (): React.ReactElement => {
         setSaveBtnDisabled(true);
     };
 
-    const handleValidation = () => {
+    const handleValidation = (): void => {
         form
             .validateFields()
             .catch((errors) => {
@@ -84,12 +112,13 @@ const EventOverview: React.FC = (): React.ReactElement => {
                 </Button>
             </div>
 
+            <ToastContainer/>
 
             <Modal
                 title="CREATE EVENT"
                 open={isModalVisible}
                 onCancel={handleCancel}
-                confirmLoading={loadingPostEvent}
+                confirmLoading={isLoadingPostEvent}
                 footer={[
                     <Button key="back" onClick={handleCancel}>
                         Cancel
@@ -97,7 +126,7 @@ const EventOverview: React.FC = (): React.ReactElement => {
                     <Button
                         key="submit"
                         type="primary"
-                        loading={loadingPostEvent}
+                        loading={isLoadingPostEvent}
                         onClick={form.submit}
                         disabled={isSaveBtnDisabled}
                     >
@@ -122,7 +151,12 @@ const EventOverview: React.FC = (): React.ReactElement => {
                             required={eventCreationBuilder?.required}
                             options={eventCreationBuilder?.options}/>
                     )}
+
+                    {
+                        isSaveBtnDisabled && <p className='d-flex justify-content-center text-danger'>Please fill all the required fields</p>
+                    }
                 </Form>
+
                 }
             </Modal>
 
