@@ -10,7 +10,7 @@ export interface CustomInputProps {
 export const CustomInput = ({name, label, required}: CustomInputProps) => {
     return (
         <Form.Item name={name} label={label} required={required} rules={requiredRule(required, label)}>
-            <Input placeholder={label} id={name} required={required}/>
+            <Input placeholder={label} id={name} required={required} data-testid={`${name}-id-ipt`} />
         </Form.Item>
     )
 }

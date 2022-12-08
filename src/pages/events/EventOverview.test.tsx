@@ -1,9 +1,11 @@
 import React from 'react';
-import {render} from '@testing-library/react';
+import {fireEvent, render, screen} from '@testing-library/react';
 import EventOverview from "./EventOverview";
 
-test('renders EventOverview component', () => {
+test('renders EventOverview component with title', () => {
     render(<EventOverview/>);
+    const title = screen.getByTestId('event-title-h4');
+    expect(title.textContent).toBe('Welcome to this overview component!');
 });
 
 

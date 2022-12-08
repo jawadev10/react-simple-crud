@@ -12,7 +12,7 @@ export interface CustomSelectProps {
 export const CustomSelect = ({name, label, options, required}: CustomSelectProps) => {
     return (
         <Form.Item name={name} label={label} required={required} rules={requiredRule(required, label)}>
-            <Select options={options} placeholder={label}  />
+            <Select options={options} placeholder={label} data-testid={`${name}-id-select`}  />
         </Form.Item>
     )
 }

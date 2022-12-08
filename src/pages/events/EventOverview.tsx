@@ -114,7 +114,7 @@ const EventOverview: React.FC = (): React.ReactElement => {
     return (
         <Fragment>
 
-            <h4 className='d-flex justify-content-center mt-4'>Welcome to this overview component!</h4>
+            <h4 data-testid='event-title-h4' className='d-flex justify-content-center mt-4'>Welcome to this overview component!</h4>
 
 
             <div className='mt-4 d-flex justify-content-center'>
