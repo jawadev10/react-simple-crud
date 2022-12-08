@@ -10,6 +10,7 @@ import moment from "moment";
 import {eventsApi} from "../../services/events.service";
 import {toast, ToastContainer} from "react-toastify";
 import {Event} from "../../models/Event";
+import Search from "antd/es/input/Search";
 
 
 const EventOverview: React.FC = (): React.ReactElement => {
@@ -23,6 +24,7 @@ const EventOverview: React.FC = (): React.ReactElement => {
     const {dataSource} = useEventsDataSource();
     const {columns} = useEventsColumns();
 
+    const [dataSourceFiltered, setDataSourceFiltered] =  useState<Event[]>([]);
 
     const [form] = useForm();
 
@@ -86,7 +88,7 @@ const EventOverview: React.FC = (): React.ReactElement => {
         setIsModalVisible(true);
     };
 
-    const handleCancel = () => {
+    const handleCancel = (): void => {
         setIsModalVisible(false);
         form.resetFields();
         setSaveBtnDisabled(true);
@@ -99,6 +101,15 @@ const EventOverview: React.FC = (): React.ReactElement => {
                 errors.errorFields.length > 0 ? setSaveBtnDisabled(true) : setSaveBtnDisabled(false);
             });
     };
+
+    const onSearch = (value: string): void => {
+        const dataSourceFiltered = dataSource?.filter((event) => {
+            if(value.length > 0) {
+                return event.title === value || event.description === value ? event : null
+            }
+        });
+        setDataSourceFiltered(dataSourceFiltered as Event[]);
+    }
 
     return (
         <Fragment>
@@ -153,13 +164,20 @@ const EventOverview: React.FC = (): React.ReactElement => {
                     )}
 
                     {
-                        isSaveBtnDisabled && <p className='d-flex justify-content-center text-danger'>Please fill all the required fields</p>
+                        isSaveBtnDisabled &&
+                        <p className='d-flex justify-content-center text-danger'>Please fill all the required fields</p>
                     }
                 </Form>
 
                 }
             </Modal>
 
+            <div className='d-flex justify-content-center mx-auto mt-3 w-50'>
+                <Search
+                    placeholder="Search by title or description"
+                    onSearch={onSearch}
+                />
+            </div>
 
             <div className='mt-5 d-flex justify-content-center text-center'>
                 {
@@ -170,7 +188,7 @@ const EventOverview: React.FC = (): React.ReactElement => {
                 {!eventsLoading && !eventsCreationBuilderLoading &&
                 <Table
                     className="w-75"
-                    dataSource={dataSource}
+                    dataSource={dataSourceFiltered && dataSourceFiltered.length > 0 ? dataSourceFiltered: dataSource}
                     columns={columns}
                 />
                 }
